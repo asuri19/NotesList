@@ -19,6 +19,7 @@ const nextMonthButton = document.querySelector('#next-month');
 const dateMark = document.querySelector('.diary-note__datemark')
 const addNewNoteButton = document.querySelector('#add-button');
 const clearNotesListButton = document.querySelector('#clear-button');
+const newListButton = document.querySelector('#new-list');
 const messageNoNotes = document.querySelector('.diary-note__clear-wrap');
 
 let monthsList = ['январь', 'февраль', 'март', 'апрель', 'май', 'июнь', 'июль', 'август', 'сентябрь', 'октябрь', 'ноябрь', 'декабрь',]
@@ -57,11 +58,8 @@ class Page {
 }
 
 // script body
-createCalendar()
+createCalendar('', true)
 setActiveDay(new Date())
-
-lastMonthButton.addEventListener('click', () => createCalendar('last'));
-nextMonthButton.addEventListener('click', () => createCalendar('next'));
 
 // работа с календарем
 openDateSelect.addEventListener('click', () => togglingNone(selectWindow))
@@ -72,13 +70,15 @@ openDateSelect.addEventListener('click', () => togglingNone(selectWindow))
 // selectOption(selectMonth, selectMonthOptions)
 
 // работа с заметками
+lastMonthButton.addEventListener('click', () => createCalendar('last', false));
+nextMonthButton.addEventListener('click', () => createCalendar('next', false));
 addNewNoteButton.addEventListener('click', () => createNote());
-clearNotesListButton.addEventListener('click', () => clearNotesList())
+clearNotesListButton.addEventListener('click', () => clearNotesList());
 
 
 // функции
 // создание календаря месяца
-function createCalendar(type) {
+function createCalendar(type, isFirstCreation) {
     calendarArea.innerHTML = '';
     if (type === 'last') {
         intDate = intDate.setMonth(intDate.getMonth() - 1);
@@ -89,7 +89,7 @@ function createCalendar(type) {
 
     let currentMonthNumber = setCurrentMonth(intDate)
     getParameters(intDate)
-    createDays(params[0], params[1], params[2], currentMonthNumber)
+    createDays(params[0], params[1], params[2], currentMonthNumber, isFirstCreation)
 }
 
 // получаем все нужные для создания календаря параметры
@@ -106,7 +106,7 @@ function getParameters(date) {
     return params
 }
 
-function createDays(firstDayWeek, daysInMonth, daysInLastMonth, monthNumber) {
+function createDays(firstDayWeek, daysInMonth, daysInLastMonth, monthNumber, isFirstCreation) {
     let counter = 0;
     let newDay = document.createElement('div');
     newDay.classList.add('diary__calendar-item');
@@ -126,6 +126,17 @@ function createDays(firstDayWeek, daysInMonth, daysInLastMonth, monthNumber) {
         newDay.innerHTML = `<span>${i}</span>`;
         calendarArea.appendChild(newDay.cloneNode(true))
         counter += 1;
+
+        if (newDay.dataset.id === `01.${monthNumber}`) {
+            let currentMonthYear = `${correctingData(new Date().getMonth() + 1)}.${new Date().getFullYear()}`;
+
+            if (monthNumber !== currentMonthYear || !isFirstCreation) {
+                let dayId = newDay.dataset.id;
+                document.querySelector(`.diary__calendar-item[data-id="${dayId}"]`).classList.add('day-active')
+                createPage(dayId, 1)
+                isFirstCreation = false
+            }
+        }
     }
 
     delete newDay.dataset.id
@@ -162,7 +173,7 @@ function setCurrentMonth(date) {
     monthName.innerText = `${month} ${year}`
     // часть для data-id
     monthNumber += 1
-    monthNumber = '0' + monthNumber
+    monthNumber = correctingData(monthNumber)
     return `${monthNumber}.${year}`
 }
 
