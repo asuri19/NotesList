@@ -132,6 +132,25 @@
     .diary__calendar-days {
         display: flex;
         flex-wrap: wrap;
+        margin-bottom: 16px;
+    }
+
+    .diary__calendar-notes {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .diary__calendar-note {
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+        color: #fff;
+        background: #556680;
+        padding: 10px 16px;
+        border-radius: 1rem;
+        font-size: 14px;
+        margin-bottom: 8px;
     }
 
     .diary__calendar-item {
@@ -141,6 +160,7 @@
         text-align: center;
         line-height: 28px;
         width: 14.2%;
+        height: 30px;
         margin: 2px 0;
         -webkit-user-select: none;
         -moz-user-select: none;
@@ -269,9 +289,38 @@
 
     .diary-note-body__title-wrap {
         display: flex;
-        align-items: center;
+        align-items: flex-start;
         justify-content: space-between;
         margin-bottom: 15px;
+    }
+
+    .diary-note-body__image {
+        position: relative;
+        width: 100%;
+        max-width: 620px;
+    }
+
+    .diary-note-body__image img {
+        max-width: 620px;
+    }
+
+    .diary-note-body__edit {
+        background: #fff;
+        position: absolute;
+        top: 0;
+        right: 5px;
+        z-index: 15;
+        padding: 10px 5px;
+        border-bottom-right-radius: 8px;
+        border-bottom-left-radius: 8px;
+        cursor: pointer;
+        transition: all 0.4s;
+    }
+
+    .diary-note-body__edit img {
+        width: 20px;
+        height: 20px;
+        opacity: 0.5;
     }
 
     .diary-note-body__del {
@@ -304,6 +353,7 @@
         font-size: 14px;
         line-height: 17px;
         width: 90%;
+        padding-right: 10px;
     }
 
     .diary-note-body__text:focus {
@@ -331,6 +381,10 @@
         border-radius: 99px;
         background: #ffd3a3;
         margin-right: 10px;
+        cursor: pointer;
+    }
+
+    .diary-note-body__button-bg label {
         cursor: pointer;
     }
 
@@ -375,13 +429,13 @@
     }
 
     .day-active {
-        background: #bfbfbe;
         border-radius: 1rem;
+        border: 2px solid #ffd3a3;
     }
 
-    .contented {
-        background: #607a9a;
-        color: #ffffff;
+    .day-noted {
+        background-color: #556680;
+        color: #fff;
         border-radius: 1rem;
     }
 
@@ -505,8 +559,8 @@
             <div class="diary__calendar-title">
                 <p>Записи</p>
                 <div class="diary__calendar-icons">
-                    <img src="https://i.postimg.cc/15qFg6M0/all.png" alt="">
-                    <img src="https://i.postimg.cc/3r6pJ9jJ/serch.png" alt="">
+                    <!--                    <img src="https://i.postimg.cc/15qFg6M0/all.png" alt="">-->
+                    <!--                    <img src="https://i.postimg.cc/3r6pJ9jJ/serch.png" alt="">-->
                 </div>
             </div>
 
@@ -628,7 +682,12 @@
                     <p>Сб</p>
                     <p>Вс</p>
                 </div>
-                <div class="diary__calendar-days"></div>
+                <div class="diary__calendar-days">
+
+                </div>
+                <div class="diary__calendar-notes">
+
+                </div>
             </div>
         </div>
 
@@ -638,8 +697,10 @@
                     <p>date</p>
                 </div>
                 <div class="diary-note__pages">
-                    <div class="diary-note__page page-active">1</div>
-                    <div class="diary-note__page">+</div>
+                    <div class="diary-note__pages-num">
+                        <div class="diary-note__page page-active">1</div>
+                    </div>
+                    <div class="diary-note__page" id="new-list">+</div>
                 </div>
                 <div class="diary-note-body">
                     <div class="diary-note-body__notes">
@@ -650,13 +711,17 @@
                     </div>
 
                     <div class="diary-note-body__buttons">
-                        <!--                        <div class="diary-note-body__button-bg" id="save-button">-->
-                        <!--                            <img src="https://i.postimg.cc/FFZJnc3r/save.png" title="Сохранить заметки"-->
-                        <!--                                 class="diary-note-body__button">-->
-                        <!--                        </div>-->
                         <div class="diary-note-body__button-bg" id="add-button">
                             <img src="https://i.postimg.cc/fL31J7g4/add.png" title="Добавить заметку" class="diary-note-body__button">
                         </div>
+
+                        <div class="diary-note-body__button-bg" id="image-button">
+                            <input type="file" id="add-image-input" accept="image/*" hidden />
+                            <label for="add-image-input" class="diary-note-body__button">
+                                <img src="https://i.postimg.cc/xTyy92Wt/image.png" title="Добавить картинку" class="diary-note-body__button">
+                            </label>
+                        </div>
+
                         <div class="diary-note-body__button-bg" id="clear-button">
                             <img src="https://i.postimg.cc/ydwt9JwD/del.png" title="Удалить все" class="diary-note-body__button">
                         </div>
@@ -671,6 +736,23 @@
     <div class="diary-note-body__note">
         <div class="diary-note-body__title-wrap">
             <div class="diary-note-body__title" contenteditable="true">
+                Заметка
+            </div>
+            <div class="diary-note-body__del">
+                <img src="https://i.postimg.cc/ydwt9JwD/del.png">
+            </div>
+        </div>
+        <div class="diary-note-body__wrap">
+            <div class="diary-note-body__time"></div>
+            <div class="diary-note-body__text" contenteditable="true">
+                Это твоя заметка и&nbsp;ее&nbsp;можно писать прямо тут!
+            </div>
+        </div>
+    </div>
+
+    <div class="diary-note-body__note">
+        <div class="diary-note-body__title-wrap">
+            <div class="diary-note-body__image" contenteditable="true">
                 Заметка
             </div>
             <div class="diary-note-body__del">
