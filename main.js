@@ -372,6 +372,7 @@ function createImageNote() {
 
 // сохранение изменений в заметке
 function editedNote(element, type) {
+
     const note = element.closest('.diary-note-body__note')
     const id = (+note.id);
     const arrayNotesLS = getNotesLS()
@@ -381,37 +382,17 @@ function editedNote(element, type) {
     if (index === -1) return;
     if (type === 'title') {
         arrayNotesLS[index].title = element.innerText
-    } else {
+    } else if (type === 'text'){
         arrayNotesLS[index].note = element.innerText
+    } else if (type === 'photo'){
+        const file = element.files[0];
+        const newImageURL = URL.createObjectURL(file);
+        element.value = null;
+        arrayNotesLS[index].photoUrl = newImageURL
     }
     setNotesLS(arrayNotesLS)
     updateNotesList()
     saveNotes(listIndex)
-}
-
-function editedImageNote(element) {
-    let editImgButton = element.querySelector('.diary-note-body__edit');
-    let input = element.querySelector('#edit-image-input');
-
-    editImgButton.classList.remove('none')
-    input.addEventListener('change', () => {
-        const note = element.closest('.diary-note-body__note')
-        const id = (+note.id);
-        const arrayNotesLS = getNotesLS()
-        const index = arrayNotesLS.findIndex(note => note.id === id);
-        let listIndex = document.querySelector('.page-active').innerText;
-
-        const newFile = input.files[0];
-        const newImageURL = URL.createObjectURL(newFile);
-        input.value = null;
-
-        if (index === -1) return;
-        arrayNotesLS[index].photoUrl = newImageURL;
-
-        setNotesLS(arrayNotesLS)
-        updateNotesList()
-        saveNotes(listIndex)
-    })
 }
 
 // удаление одной заметки
@@ -522,7 +503,6 @@ function renderNotes(notes) {
         messageNoNotes.classList.remove('none')
         return
     }
-
     messageNoNotes.classList.add('none')
     notes.forEach(value => {
         const {id, title, time, note, type, photoUrl} = value;
@@ -549,8 +529,8 @@ function renderNotes(notes) {
                     <div class="diary-note-body__image" contenteditable="false">
                         <img src="${photoUrl}">
                         <div class="diary-note-body__edit none">
-                            <input type="file" id="edit-image-input" accept="image/*" hidden/>
-                            <label for="edit-image-input">
+                            <input type="file" id="input-${id}" accept="image/*" hidden/>
+                            <label for="input-${id}">
                                 <img src="https://i.postimg.cc/qMRPZkYP/edite.png" />
                             </label>
                         </div>
@@ -573,11 +553,15 @@ function renderNotes(notes) {
             let noteTitle = appendedNote.querySelector('.diary-note-body__title');
             noteTitle.addEventListener('blur', () => editedNote(noteTitle, 'title'))
         } else {
-            let image = document.querySelector(`.diary-note-body__image`);
-            image.addEventListener('mouseenter', () => editedImageNote(image))
-            image.addEventListener('mouseleave', () => {
-                image.querySelector('.diary-note-body__edit').classList.add('none');
+            let image = appendedNote.querySelector('.diary-note-body__image');
+            let input = document.getElementById(`input-${id}`);
+            image.addEventListener('mouseenter', () => {
+                appendedNote.querySelector('.diary-note-body__edit').classList.remove('none');
             })
+            image.addEventListener('mouseleave', () => {
+                appendedNote.querySelector('.diary-note-body__edit').classList.add('none');
+            })
+            input.addEventListener('change', () => editedNote(input, 'photo'))
         }
         let noteText = appendedNote.querySelector('.diary-note-body__text');
         let delButton = appendedNote.querySelector('.diary-note-body__del');
