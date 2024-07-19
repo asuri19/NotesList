@@ -412,6 +412,51 @@
         user-select: none;
     }
 
+    .diary-note__popup {
+        position: fixed;
+        top: 0;
+        left: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        height: 100vh;
+        background-color: rgba(48, 47, 45, 0.6);
+        z-index: 15;
+    }
+
+    .diary-note__popup-content {
+        position: relative;
+        left: 190px;
+        width: 45%;
+        border-radius: 1rem;
+        background-color: #fff;
+        padding: 20px;
+    }
+
+    .diary-note__popup-wrap {
+        margin-bottom: 20px;
+    }
+
+    .diary-note__popup-title {
+        font-size: 30px;
+        line-height: 30px;
+        margin-bottom: 15px;
+    }
+
+    .diary-note__popup-title:focus {
+        outline: none;
+    }
+
+    .diary-note__popup-text {
+        font-size: 14px;
+        line-height: 17px;
+    }
+
+    .diary-note__popup-text:focus {
+        outline: none;
+    }
+
     .diary-note__clear {
         font-size: 30px;
         line-height: 30px;
@@ -711,9 +756,11 @@
                     <div class="diary-note__page" id="new-list">+</div>
                 </div>
                 <div class="diary-note-body">
+
                     <div class="diary-note-body__notes">
 
                     </div>
+
                     <div class="diary-note__clear-wrap">
                         <div class="diary-note__clear">Заметок пока нет</div>
                     </div>
@@ -734,6 +781,19 @@
                             <img src="https://i.postimg.cc/ydwt9JwD/del.png" title="Удалить все" class="diary-note-body__button">
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="diary-note__popup none">
+        <div class="diary-note__popup-content">
+            <div class="diary-note__popup-wrap">
+                <div class="diary-note__popup-title" contenteditable="true">
+                    Заголовок
+                </div>
+                <div class="diary-note__popup-text" contenteditable="true">
+                    Текст заметки
                 </div>
             </div>
         </div>
