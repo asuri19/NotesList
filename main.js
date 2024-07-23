@@ -23,10 +23,19 @@ const clearNotesListButton = document.querySelector('#clear-button');
 const newListButton = document.querySelector('#new-list');
 const messageNoNotes = document.querySelector('.diary-note__clear-wrap');
 
-let monthsList = ['январь', 'февраль', 'март', 'апрель', 'май', 'июнь', 'июль', 'август', 'сентябрь', 'октябрь', 'ноябрь', 'декабрь',]
+const popup = document.querySelector('.diary-note__popup')
+const saveButton = popup.querySelector('#save-button');
+const canselButton = popup.querySelector('#cansel-button');
+const popupIdBox = popup.querySelector('.popup-note-id')
+const popupImageWrapper = popup.querySelector('.diary-note__popup-image')
+const popupTitle = popup.querySelector('.diary-note__popup-title')
+const popupText = popup.querySelector('.diary-note__popup-text')
+const changeImageInput = document.querySelector('#edit-img');
 
+let newUrl;
+
+const monthsList = ['январь', 'февраль', 'март', 'апрель', 'май', 'июнь', 'июль', 'август', 'сентябрь', 'октябрь', 'ноябрь', 'декабрь',]
 let intDate = new Date();
-let params = []
 
 class Page {
     constructor(dataId, index, notes) {
@@ -41,7 +50,7 @@ class Page {
     createId(date, index) {
         date = date.split('');
         date = date[0] + date[1] + date[3] + date[4] + date[6] + date[7] + date[8] + date[9];
-        return date = date + index
+        return date + index
     }
 
     createBookmark(date) {
@@ -60,7 +69,7 @@ class Page {
 }
 
 // script body
-createCalendar('', true)
+createCalendar({type: '', isFirstCreation: true})
 setActiveDay(new Date())
 
 // работа с календарем
@@ -72,17 +81,25 @@ openDateSelect.addEventListener('click', () => togglingNone(selectWindow))
 // selectOption(selectMonth, selectMonthOptions)
 
 // работа с заметками
-lastMonthButton.addEventListener('click', () => createCalendar('last', false));
-nextMonthButton.addEventListener('click', () => createCalendar('next', false));
+lastMonthButton.addEventListener('click', () => createCalendar({type: 'last', isFirstCreation: false}));
+nextMonthButton.addEventListener('click', () => createCalendar({type: 'next', isFirstCreation: false}));
 addNewImageButton.addEventListener('change', () => createImageNote());
 addNewNoteButton.addEventListener('click', () => createNote());
 clearNotesListButton.addEventListener('click', () => clearNotesList());
-// newListButton.addEventListener('click', () => newList());
+
+canselButton.addEventListener('click', () => {
+    popup.classList.add('none')
+})
+saveButton.addEventListener('click', () => {
+    popup.classList.add('none')
+    let noteId = (+popupIdBox.innerText)
+    editNote(noteId)
+})
 
 
 // функции
 // создание календаря месяца
-function createCalendar(type, isFirstCreation) {
+function createCalendar({type, isFirstCreation}) {
     calendarArea.innerHTML = '';
     if (type === 'last') {
         intDate = intDate.setMonth(intDate.getMonth() - 1);
@@ -91,13 +108,18 @@ function createCalendar(type, isFirstCreation) {
     }
     intDate = new Date(intDate)
 
-    let currentMonthNumber = setCurrentMonth(intDate)
-    getParameters(intDate)
-    createDays(params[0], params[1], params[2], currentMonthNumber, isFirstCreation)
+    const params = getCalendarParameters(intDate)
+    createDays({
+        firstDayWeek: params.firstDayWeek,
+        daysInMonth: params.daysInMonth,
+        daysInLastMonth: params.daysInLastMonth,
+        monthNumber: setCurrentMonth(intDate),
+        isFirstCreation
+    })
 }
 
 // получаем все нужные для создания календаря параметры
-function getParameters(date) {
+function getCalendarParameters(date) {
     let firstDayWeek = new Date(date.setDate(1)).getDay();
     if (firstDayWeek === 0) {
         firstDayWeek = 7
@@ -106,30 +128,54 @@ function getParameters(date) {
     date = new Date(date.setMonth(date.getMonth() - 1));
     let daysInLastMonth = 32 - new Date(date.getFullYear(), date.getMonth(), 32).getDate();
     intDate = new Date(date.setMonth(date.getMonth() + 1));
-    params = [firstDayWeek, daysInMonth, daysInLastMonth]
-    return params
+    return {
+        firstDayWeek,
+        daysInMonth,
+        daysInLastMonth
+    }
 }
 
-function createDays(firstDayWeek, daysInMonth, daysInLastMonth, monthNumber, isFirstCreation) {
-    let counter = 0;
-    let newDay = document.createElement('div');
+function createDays({firstDayWeek, daysInMonth, daysInLastMonth, monthNumber, isFirstCreation}) {
+    const lastMonthDaysAmount = firstDayWeek - 1;
+    const nextMonthDaysAmount = 7 - ((lastMonthDaysAmount + daysInMonth) % 7);
+    const newDay = document.createElement('div');
     newDay.classList.add('diary__calendar-item');
 
-    for (let i = firstDayWeek - 2; i >= 0; i--) {
+    createLastMonthDays({daysInLastMonth, newDay, lastMonthDaysAmount})
+    createCurrentMonthDays({daysInMonth, newDay, monthNumber, isFirstCreation})
+    delete newDay.dataset.id
+    createNextMonthDays({newDay, nextMonthDaysAmount})
+// исправить код ниже с использованием делегирования
+    let daysList = document.querySelectorAll('.diary__calendar-item');
+    daysList.forEach(item => {
+        if (item.querySelector('span').classList.contains('dif-month')) {
+            return
+        }
+        item.addEventListener('click', () => {
+            daysList.forEach(element => {
+                element.classList.remove('day-active')
+            })
+            item.classList.add('day-active')
+            let dayId = item.dataset.id;
+            createPage(dayId, 1)
+        });
+    })
+}
+
+// отрисовка дней в календаре
+function createLastMonthDays({daysInLastMonth, newDay, lastMonthDaysAmount}) {
+    for (let i = lastMonthDaysAmount; i > 0; i--) {
         newDay.innerHTML = `<span class="dif-month">${daysInLastMonth - i}</span>`;
         calendarArea.appendChild(newDay.cloneNode(true))
-        counter += 1;
     }
+}
 
+function createCurrentMonthDays({daysInMonth, newDay, monthNumber, isFirstCreation}) {
     for (let i = 1; i <= daysInMonth; i++) {
-        let index = i
-        if (index < 10) {
-            index = '0' + index
-        }
+        let index = correctingData(i)
         newDay.dataset.id = `${index}.${monthNumber}`;
         newDay.innerHTML = `<span>${i}</span>`;
         calendarArea.appendChild(newDay.cloneNode(true))
-        counter += 1;
 
         if (newDay.dataset.id === `01.${monthNumber}`) {
             let currentMonthYear = `${correctingData(new Date().getMonth() + 1)}.${new Date().getFullYear()}`;
@@ -142,43 +188,27 @@ function createDays(firstDayWeek, daysInMonth, daysInLastMonth, monthNumber, isF
             }
         }
     }
+}
 
-    delete newDay.dataset.id
-    counter = 7 - counter % 7;
-    if (counter !== 7) {
-        for (let i = 1; i <= counter; i++) {
-            newDay.innerHTML = `<span class="dif-month">${i}</span>`;
-            calendarArea.appendChild(newDay.cloneNode(true))
-        }
+function createNextMonthDays({newDay, nextMonthDaysAmount}) {
+    if (nextMonthDaysAmount === 7) {
+        return
     }
-
-    let daysList = document.querySelectorAll('.diary__calendar-item');
-    daysList.forEach(item => {
-        if (item.querySelector('span').classList.contains('dif-month')) {
-            return
-        }
-        item.addEventListener('click', () => {
-            daysList.forEach(item => {
-                item.classList.remove('day-active')
-            })
-            item.classList.add('day-active')
-            let dayId = item.dataset.id;
-            createPage(dayId, 1)
-        });
-    })
+    for (let i = 1; i <= nextMonthDaysAmount; i++) {
+        newDay.innerHTML = `<span class="dif-month">${i}</span>`;
+        calendarArea.appendChild(newDay.cloneNode(true))
+    }
 }
 
 // отображение названия текущего месяца
 function setCurrentMonth(date) {
-    let monthNumber = date.getMonth()
+    let monthNumber = date.getMonth();
+    const year = date.getFullYear();
+    const month = stringMonthName(monthNumber);
+    monthName.innerText = `${month} ${year}`;
 
-    let year = date.getFullYear()
-    let month = stringMonthName(monthNumber)
-    monthName.innerText = `${month} ${year}`
-    // часть для data-id
-    monthNumber += 1
-    monthNumber = correctingData(monthNumber)
-    return `${monthNumber}.${year}`
+    monthNumber = correctingData(monthNumber + 1);
+    return `${monthNumber}.${year}`;
 }
 
 function stringMonthName(monthNumber) {
@@ -211,7 +241,6 @@ function setActiveDay(date) {
     createPage(fullDate, 1)
 }
 
-
 // создание или отрисовка новой страницы
 function createPage(dateId, index) {
     let page = new Page(dateId, index, [])
@@ -230,92 +259,7 @@ function createPage(dateId, index) {
     }
 }
 
-function newList() {
-    // let dateId = document.querySelector('.day-active').dataset.id;
-    // let arrayPagesLS = getPagesLS();
-    // let pageIndexLS = arrayPagesLS.findIndex(page => page.date === dateId)
-    //
-    // let newListNumber = arrayPagesLS[pageIndexLS].lists + 1;
-    // if (newListNumber > 10) {
-    //     return
-    // }
-    //
-    // createPage(dateId, newListNumber)
-    // arrayPagesLS = getPagesLS();
-    // arrayPagesLS.forEach(item => {
-    //     if (item.date === dateId) {
-    //         item.lists = item.lists + 1
-    //     }
-    // })
-    // setPagesLS(arrayPagesLS)
-    // console.log(dateId, newListNumber);
-
-
-    // let marksBody = document.querySelector('.diary-note__pages-num');
-    // const arrayPages = getPagesLS();
-    // let dateId = document.querySelector('.day-active').dataset.id;
-    // let pageIndexes = []
-    // while (arrayPages.findIndex(page => page.date === dateId) !== -1) {
-    //     pageIndexes.push(arrayPages.findIndex(page => page.date === dateId));
-    // }
-    // pageIndexes.forEach(item => {
-    //     arrayPages[item].lists += 1
-    // })
-    // let lists = arrayPages[pageIndexes[0]].lists
-
-
-    // arrayPages[pageIndex].lists += 1
-    // let lists = arrayPages[pageIndex].lists
-    // setListsMarks(lists)
-
-    // if (pageIndex !== -1) {
-    //     arrayPages[pageIndex].lists += 1;
-    //     setPagesLS(arrayPages)
-    // }
-
-    // let dateId = deleteDots(document.querySelector('.day-active').dataset.id);
-    // let listButtons = marksBody.querySelectorAll('.diary-note__page');
-    // let lastListNumber = listButtons.length;
-    // printPageNotes(arrayPages[pageIndex].notes)
-    //
-    // let div = document.createElement('div');
-    // div.classList.add('diary-note__page')
-    // div.innerText = listButtons.length + 1;
-    // marksBody.appendChild(div.cloneNode(true));
-    // if (lastListNumber === 9) {
-    //     newListButton.classList.add('none');
-    // }
-    //
-    // listButtons = marksBody.querySelectorAll('.diary-note__page');
-    //
-    // listButtons.forEach(item => {
-    //     item.addEventListener('click', () => {
-    //         listButtons.forEach(item => {
-    //             item.classList.remove('page-active')
-    //         })
-    //         item.classList.add('page-active')
-    //         let indexOnButton = item.innerText
-    //         createPage(dateId, indexOnButton)
-    //     });
-    // })
-}
-
-// function saveListMarks() {
-//     let activeDay = document.querySelector('.day-active');
-//     const arrayPages = getPagesLS();
-//     let activeId = activeDay.dataset.id + listIndex;
-//     let pageIndex = arrayPages.findIndex(page => page.date === activeId);
-//
-//     const arrayNotes = getNotesLS();
-//     if (pageIndex !== -1) {
-//         arrayPages[pageIndex].notes = arrayNotes;
-//     } else {
-//         return
-//     }
-//     setPagesLS(arrayPages)
-// }
-
-// кнопка сохранить
+// сохранение нового массива заметок на странице
 function saveNotes(listIndex) {
     let activeDay = document.querySelector('.day-active');
     const arrayPages = getPagesLS();
@@ -324,11 +268,10 @@ function saveNotes(listIndex) {
     activeId = deleteDots(activeId)
     let pageIndex = arrayPages.findIndex(page => page.listId === activeId);
     const arrayNotes = getNotesLS();
-    if (pageIndex !== -1) {
-        arrayPages[pageIndex].notes = arrayNotes;
-    } else {
-        return
+    if (pageIndex === -1) {
+        return;
     }
+    arrayPages[pageIndex].notes = arrayNotes;
     setPagesLS(arrayPages)
 }
 
@@ -340,9 +283,10 @@ function createNote() {
     const arrayNotes = getNotesLS();
     arrayNotes.push({
         id: generateUniqueId(),
-        title: title,
+        photoUrl: '',
+        title,
         time: getCreationNoteTime(),
-        note: note,
+        note,
         type: 'text'
     });
 
@@ -356,11 +300,13 @@ function createImageNote() {
     const imageURL = URL.createObjectURL(file);
     addNewImageButton.value = null;
     let note = 'Ты можешь добавить описание к фото тут!'
+    let title = 'Title'
     let listIndex = document.querySelector('.page-active').innerText;
     const arrayNotes = getNotesLS();
     arrayNotes.push({
         id: generateUniqueId(),
         photoUrl: imageURL,
+        title: title,
         time: getCreationNoteTime(),
         note: note,
         type: 'photo'
@@ -371,28 +317,43 @@ function createImageNote() {
 }
 
 // сохранение изменений в заметке
-function editedNote(element, type) {
-
-    const note = element.closest('.diary-note-body__note')
-    const id = (+note.id);
+function editNote(noteId) {
     const arrayNotesLS = getNotesLS()
-    const index = arrayNotesLS.findIndex(note => note.id === id);
+    const index = arrayNotesLS.findIndex(note => note.id === noteId);
     let listIndex = document.querySelector('.page-active').innerText;
 
     if (index === -1) return;
-    if (type === 'title') {
-        arrayNotesLS[index].title = element.innerText
-    } else if (type === 'text'){
-        arrayNotesLS[index].note = element.innerText
-    } else if (type === 'photo'){
-        const file = element.files[0];
-        const newImageURL = URL.createObjectURL(file);
-        element.value = null;
-        arrayNotesLS[index].photoUrl = newImageURL
-    }
+    arrayNotesLS[index].photoUrl = popupImageWrapper.querySelector('img').src
+    arrayNotesLS[index].title = popupTitle.innerText
+    arrayNotesLS[index].note = popupText.innerText
+
     setNotesLS(arrayNotesLS)
     updateNotesList()
     saveNotes(listIndex)
+}
+
+// открытие и заполнение попапа актуальным контентом заметки
+function createPopup(evt, note, title, id, url) {
+    if (evt.target.className === 'del-btn') return
+
+    popup.classList.remove('none')
+    popupImageWrapper.querySelector('img').src = url;
+    popupIdBox.innerText = id
+    popupTitle.innerText = title;
+    popupText.innerText = note;
+
+    popupImageWrapper.addEventListener('mouseenter', () => {
+        document.querySelector('.diary-note__popup-edit').classList.remove('none');
+    })
+    popupImageWrapper.addEventListener('mouseleave', () => {
+        document.querySelector('.diary-note__popup-edit').classList.add('none');
+    })
+    changeImageInput.addEventListener('change', () => {
+        const file = changeImageInput.files[0];
+        const imageURL = URL.createObjectURL(file);
+        changeImageInput.value = null;
+        popupImageWrapper.querySelector('img').src = imageURL;
+    })
 }
 
 // удаление одной заметки
@@ -443,9 +404,7 @@ function correctingData(data) {
 }
 
 function generateUniqueId() {
-    let randomOne = Math.floor(Math.random() * 100000);
-    let randomTwo = Math.floor(Math.random() * 100000);
-    return randomOne + randomTwo;
+    return Math.floor((Math.random() + Math.random()) * 100000);
 }
 
 function getPagesLS() {
@@ -472,15 +431,13 @@ function setNotesLS(notes) {
 
 function printPageNotes(page) {
     notesList.innerText = '';
-    // setListsMarks(page.lists, page.listId)
     setNotesLS(page.notes)
     renderNotes(page.notes);
 }
 
 function updateNotesList() {
     notesList.innerText = '';
-    const arrayNotesLS = getNotesLS();
-    renderNotes(arrayNotesLS);
+    renderNotes(getNotesLS());
 }
 
 function setListsMarks(lists, active) {
@@ -499,7 +456,7 @@ function setListsMarks(lists, active) {
 }
 
 function renderNotes(notes) {
-    if (!notes || !notes.length) {
+    if (notes.length === 0) {
         messageNoNotes.classList.remove('none')
         return
     }
@@ -507,27 +464,24 @@ function renderNotes(notes) {
     notes.forEach(value => {
         const {id, title, time, note, type, photoUrl} = value;
         let item = '';
-
         if (type === 'text') {
             item = `<div class="diary-note-body__note" id="${id}">
                 <div class="diary-note-body__title-wrap">
-                    <div class="diary-note-body__title" contenteditable="true">
-                        ${title}
-                    </div>
+                    <div class="diary-note-body__title">${title}</div>
                 </div>
                 <div class="diary-note-body__wrap">
                     <div class="diary-note-body__time">${time}</div>
-                    <div class="diary-note-body__text" contenteditable="true">${note}</div>
+                    <div class="diary-note-body__text">${note}</div>
                     <div class="diary-note-body__del">
-                        <img src="https://i.postimg.cc/ydwt9JwD/del.png">
+                        <img src="https://i.postimg.cc/ydwt9JwD/del.png" class="del-btn">
                     </div>
                 </div>
             </div>`
         } else {
             item = `<div class="diary-note-body__note" id="${id}">
-                <div class="diary-note-body__title-wrap">
-                    <div class="diary-note-body__image" contenteditable="false">
-                        <img src="${photoUrl}">
+                <div class="diary-note-body__image-wrap">
+                    <div class="diary-note-body__image">
+                        <img src="${photoUrl}" class="note-img">
                         <div class="diary-note-body__edit none">
                             <input type="file" id="input-${id}" accept="image/*" hidden/>
                             <label for="input-${id}">
@@ -536,11 +490,14 @@ function renderNotes(notes) {
                         </div>
                     </div>
                 </div>
+                <div class="diary-note-body__title-wrap">
+                    <div class="diary-note-body__title">${title}</div>
+                </div>
                 <div class="diary-note-body__wrap">
                     <div class="diary-note-body__time">${time}</div>
-                    <div class="diary-note-body__text" contenteditable="true">${note}</div>
+                    <div class="diary-note-body__text">${note}</div>
                     <div class="diary-note-body__del">
-                        <img src="https://i.postimg.cc/ydwt9JwD/del.png">
+                        <img src="https://i.postimg.cc/ydwt9JwD/del.png" class="del-btn">
                     </div>
                 </div>
             </div>
@@ -548,25 +505,9 @@ function renderNotes(notes) {
         }
         notesList.insertAdjacentHTML('beforeend', item);
         let appendedNote = document.getElementById(id);
+        appendedNote.addEventListener('click', (evt) => createPopup(evt, note, title, id, photoUrl))
 
-        if (type === 'text') {
-            let noteTitle = appendedNote.querySelector('.diary-note-body__title');
-            noteTitle.addEventListener('blur', () => editedNote(noteTitle, 'title'))
-        } else {
-            let image = appendedNote.querySelector('.diary-note-body__image');
-            let input = document.getElementById(`input-${id}`);
-            image.addEventListener('mouseenter', () => {
-                appendedNote.querySelector('.diary-note-body__edit').classList.remove('none');
-            })
-            image.addEventListener('mouseleave', () => {
-                appendedNote.querySelector('.diary-note-body__edit').classList.add('none');
-            })
-            input.addEventListener('change', () => editedNote(input, 'photo'))
-        }
-        let noteText = appendedNote.querySelector('.diary-note-body__text');
         let delButton = appendedNote.querySelector('.diary-note-body__del');
-
-        noteText.addEventListener('blur', () => editedNote(noteText, 'text'))
         delButton.addEventListener('click', () => delNote(delButton))
     })
 }

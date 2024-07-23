@@ -536,8 +536,6 @@
 
         .diary-note-body__title {
 
-            width: 90%;
-
             font-size: 30px;
 
             line-height: 30px;
@@ -575,6 +573,18 @@
         .diary-note-body__image img {
 
             max-width: 620px;
+
+        }
+
+        .diary-note-body__image-wrap {
+
+            display: flex;
+
+            align-items: flex-start;
+
+            justify-content: space-between;
+
+            margin-bottom: 15px;
 
         }
 
@@ -770,6 +780,8 @@
 
             display: flex;
 
+            flex-direction: column;
+
             justify-content: center;
 
             align-items: center;
@@ -786,17 +798,29 @@
 
         .diary-note__popup-content {
 
+            display: flex;
+
+            flex-direction: column;
+
+            justify-content: space-between;
+
             position: relative;
 
             left: 190px;
 
             width: 45%;
 
-            border-radius: 1rem;
+            max-height: 45%;
+
+            border-top-right-radius: 1rem;
+
+            border-top-left-radius: 1rem;
 
             background-color: #fff;
 
             padding: 20px;
+
+            overflow: scroll;
 
         }
 
@@ -806,7 +830,71 @@
 
         }
 
+        .diary-note__popup-image {
+
+            width: 150px;
+
+            margin-bottom: 10px;
+
+        }
+
+        .diary-note__popup-image img {
+
+            width: 150px;
+
+        }
+
+        .diary-note__popup-edit {
+
+            background: #fff;
+
+            position: absolute;
+
+            top: 20px;
+
+            left: 20px;
+
+            z-index: 15;
+
+            padding: 5px 5px;
+
+            border-bottom-right-radius: 8px;
+
+            border-bottom-left-radius: 8px;
+
+            cursor: pointer;
+
+            transition: all 0.4s;
+
+        }
+
+        .diary-note__popup-edit input {
+
+            cursor: pointer;
+
+        }
+
+        .diary-note__popup-edit label {
+
+            cursor: pointer;
+
+        }
+
+        .diary-note__popup-edit img {
+
+            width: 20px;
+
+            height: 20px;
+
+            opacity: 0.5;
+
+        }
+
         .diary-note__popup-title {
+
+            word-break: break-word;
+
+            background: #fff;
 
             font-size: 30px;
 
@@ -833,6 +921,72 @@
         .diary-note__popup-text:focus {
 
             outline: none;
+
+        }
+
+        .diary-note__popup-buttons {
+
+            display: flex;
+
+            position: relative;
+
+            left: 190px;
+
+            background: #fff;
+
+            border-bottom-right-radius: 1rem;
+
+            border-bottom-left-radius: 1rem;
+
+            justify-content: flex-end;
+
+            align-items: center;
+
+            width: 45%;
+
+            padding: 10px 10px 10px;
+
+        }
+
+        .diary-note__popup-button {
+
+            height: 20px;
+
+            width: 20px;
+
+            -webkit-user-select: none;
+
+            -moz-user-select: none;
+
+            user-select: none;
+
+        }
+
+        .diary-note__popup-button-bg {
+
+            display: flex;
+
+            justify-content: center;
+
+            align-items: center;
+
+            height: 50px;
+
+            width: 50px;
+
+            border-radius: 99px;
+
+            background: #ffd3a3;
+
+            cursor: pointer;
+
+            margin-right: 10px;
+
+        }
+
+        .diary-note__popup-button-bg:active {
+
+            transform: scale(0.9);
 
         }
 
@@ -1457,17 +1611,45 @@
 
                 <div class="diary-note__popup-wrap">
 
-                    <div class="diary-note__popup-title" contenteditable="true">
+                    <div class="popup-note-id none"></div>
 
-                        Заголовок
+                    <div class="diary-note__popup-image">
+
+                        <img src="">
+
+                        <div class="diary-note__popup-edit none">
+
+                            <input type="file" id="edit-img" accept="image/*" hidden />
+
+                            <label for="edit-img">
+
+                                <img src="https://i.postimg.cc/qMRPZkYP/edite.png" />
+
+                            </label>
+
+                        </div>
 
                     </div>
 
-                    <div class="diary-note__popup-text" contenteditable="true">
+                    <div class="diary-note__popup-title" contenteditable="true">Заголовок</div>
 
-                        Текст заметки
+                    <div class="diary-note__popup-text" contenteditable="true">Текст заметки</div>
 
-                    </div>
+                </div>
+
+            </div>
+
+            <div class="diary-note__popup-buttons">
+
+                <div class="diary-note__popup-button-bg" id="save-button">
+
+                    <img src="https://i.postimg.cc/FFZJnc3r/save.png" title="Сохранить заметку" class="diary-note__popup-button">
+
+                </div>
+
+                <div class="diary-note__popup-button-bg" id="cansel-button">
+
+                    <img src="https://i.postimg.cc/C1TmcSKM/del.png" title="Отменить изменения" class="diary-note__popup-button">
 
                 </div>
 
