@@ -1,38 +1,25 @@
 //переменные
 const calendarArea = document.querySelector('.diary__calendar-days');
-const openDateSelect = document.querySelector('.diary__calendar-select-icon');
-const selectWindow = document.querySelector('.selector');
-
-const selectYear = document.querySelector('.selector-year')
-const selectYearOptions = document.querySelector('.selector-year__options')
-const selectYearButton = document.querySelector('.selector-year__open');
-
-const selectMonth = document.querySelector('.selector-month')
-const selectMonthOptions = document.querySelector('.selector-month__options')
-const selectMonthButton = document.querySelector('.selector-month__open');
 const notesList = document.querySelector('.diary-note-body__notes');
 
-const monthName = document.querySelector('.diary__calendar-select-title p');
+const monthName = document.querySelector('.diary__calendar-select-title');
 const lastMonthButton = document.querySelector('#last-month');
 const nextMonthButton = document.querySelector('#next-month');
 
 const dateMark = document.querySelector('.diary-note__datemark')
 const addNewNoteButton = document.querySelector('#add-button');
-const addNewImageButton = document.querySelector('#add-image-input');
 const clearNotesListButton = document.querySelector('#clear-button');
-const newListButton = document.querySelector('#new-list');
 const messageNoNotes = document.querySelector('.diary-note__clear-wrap');
 
-const popup = document.querySelector('.diary-note__popup')
+const popup = document.querySelector('.diary__popup')
 const saveButton = popup.querySelector('#save-button');
 const canselButton = popup.querySelector('#cansel-button');
-const popupIdBox = popup.querySelector('.popup-note-id')
-const popupImageWrapper = popup.querySelector('.diary-note__popup-image')
-const popupTitle = popup.querySelector('.diary-note__popup-title')
-const popupText = popup.querySelector('.diary-note__popup-text')
-const changeImageInput = document.querySelector('#edit-img');
+const cleanPopupImages = document.querySelector('#clean-images')
+const popupIdBox = popup.querySelector('.diary__popup-id')
 
-let newUrl;
+const popupTitle = popup.querySelector('.diary__popup-title')
+const popupText = popup.querySelector('.diary__popup-text')
+const addPopupImageButton = document.querySelector('#add-img');
 
 const monthsList = ['январь', 'февраль', 'март', 'апрель', 'май', 'июнь', 'июль', 'август', 'сентябрь', 'октябрь', 'ноябрь', 'декабрь',]
 let intDate = new Date();
@@ -40,17 +27,15 @@ let intDate = new Date();
 class Page {
     constructor(dataId, index, notes) {
         this.date = dataId;
-        this.listIndex = index;
-        this.listId = this.createId(this.date, this.listIndex);
+        this.listId = this.createId(this.date);
         this.bookmark = this.createBookmark(this.date)
         this.notes = notes;
-        this.lists = 1;
     }
 
-    createId(date, index) {
+    createId(date) {
         date = date.split('');
         date = date[0] + date[1] + date[3] + date[4] + date[6] + date[7] + date[8] + date[9];
-        return date + index
+        return date
     }
 
     createBookmark(date) {
@@ -72,30 +57,11 @@ class Page {
 createCalendar({type: '', isFirstCreation: true})
 setActiveDay(new Date())
 
-// работа с календарем
-openDateSelect.addEventListener('click', () => togglingNone(selectWindow))
-// фильтры внутри календаря (вернусь потом)
-// selectYearButton.addEventListener('click', () => togglingNone(selectYearOptions))
-// selectMonthButton.addEventListener('click', () => togglingNone(selectMonthOptions))
-// selectOption(selectYear, selectYearOptions)
-// selectOption(selectMonth, selectMonthOptions)
-
 // работа с заметками
 lastMonthButton.addEventListener('click', () => createCalendar({type: 'last', isFirstCreation: false}));
 nextMonthButton.addEventListener('click', () => createCalendar({type: 'next', isFirstCreation: false}));
-addNewImageButton.addEventListener('change', () => createImageNote());
 addNewNoteButton.addEventListener('click', () => createNote());
 clearNotesListButton.addEventListener('click', () => clearNotesList());
-
-canselButton.addEventListener('click', () => {
-    popup.classList.add('none')
-})
-saveButton.addEventListener('click', () => {
-    popup.classList.add('none')
-    let noteId = (+popupIdBox.innerText)
-    editNote(noteId)
-})
-
 
 // функции
 // создание календаря месяца
@@ -218,18 +184,6 @@ function stringMonthName(monthNumber) {
     return monthName.join('')
 }
 
-// для селекторов внутри селектора даты
-function selectOption(select, options) {
-    let selectedOption = select.querySelector('p');
-    let selectList = select.querySelectorAll('.selector__option')
-    selectList.forEach(item => {
-        item.addEventListener('click', () => {
-            selectedOption.innerText = item.innerText
-            options.classList.add('none')
-        })
-    })
-}
-
 // установка активного класса на сегодняшний день
 function setActiveDay(date) {
     let day = correctingData(date.getDate());
@@ -260,14 +214,13 @@ function createPage(dateId, index) {
 }
 
 // сохранение нового массива заметок на странице
-function saveNotes(listIndex) {
-    let activeDay = document.querySelector('.day-active');
+function saveNotes() {
+    let activeDayId = document.querySelector('.day-active').dataset.id;
     const arrayPages = getPagesLS();
-    let activeId = activeDay.dataset.id + listIndex;
-
-    activeId = deleteDots(activeId)
-    let pageIndex = arrayPages.findIndex(page => page.listId === activeId);
     const arrayNotes = getNotesLS();
+
+    activeDayId = deleteDots(activeDayId)
+    let pageIndex = arrayPages.findIndex(page => page.listId === activeDayId);
     if (pageIndex === -1) {
         return;
     }
@@ -279,81 +232,114 @@ function saveNotes(listIndex) {
 function createNote() {
     let title = 'Заголовок'
     let note = 'Это твоя заметка и ее можно писать прямо тут!'
-    let listIndex = document.querySelector('.page-active').innerText;
     const arrayNotes = getNotesLS();
     arrayNotes.push({
         id: generateUniqueId(),
-        photoUrl: '',
+        photoUrl: [],
         title,
         time: getCreationNoteTime(),
         note,
-        type: 'text'
     });
 
     setNotesLS(arrayNotes)
     updateNotesList()
-    saveNotes(listIndex)
-}
-
-function createImageNote() {
-    const file = addNewImageButton.files[0];
-    const imageURL = URL.createObjectURL(file);
-    addNewImageButton.value = null;
-    let note = 'Ты можешь добавить описание к фото тут!'
-    let title = 'Title'
-    let listIndex = document.querySelector('.page-active').innerText;
-    const arrayNotes = getNotesLS();
-    arrayNotes.push({
-        id: generateUniqueId(),
-        photoUrl: imageURL,
-        title: title,
-        time: getCreationNoteTime(),
-        note: note,
-        type: 'photo'
-    });
-    setNotesLS(arrayNotes)
-    updateNotesList()
-    saveNotes(listIndex)
+    saveNotes()
 }
 
 // сохранение изменений в заметке
-function editNote(noteId) {
+function saveNoteChanges(temporaryPopupData) {
+
     const arrayNotesLS = getNotesLS()
-    const index = arrayNotesLS.findIndex(note => note.id === noteId);
-    let listIndex = document.querySelector('.page-active').innerText;
+    const index = arrayNotesLS.findIndex(note => note.id === temporaryPopupData.noteId);
 
     if (index === -1) return;
-    arrayNotesLS[index].photoUrl = popupImageWrapper.querySelector('img').src
+    console.log(temporaryPopupData.noteId)
+    arrayNotesLS[index].photoUrl = temporaryPopupData.noteImagesUrl
     arrayNotesLS[index].title = popupTitle.innerText
     arrayNotesLS[index].note = popupText.innerText
 
     setNotesLS(arrayNotesLS)
     updateNotesList()
-    saveNotes(listIndex)
+    saveNotes()
 }
 
 // открытие и заполнение попапа актуальным контентом заметки
-function createPopup(evt, note, title, id, url) {
+function createPopup({evt, note, title, id, url}) {
     if (evt.target.className === 'del-btn') return
-
     popup.classList.remove('none')
-    popupImageWrapper.querySelector('img').src = url;
-    popupIdBox.innerText = id
-    popupTitle.innerText = title;
-    popupText.innerText = note;
 
-    popupImageWrapper.addEventListener('mouseenter', () => {
-        document.querySelector('.diary-note__popup-edit').classList.remove('none');
+    let temporaryPopupData = {
+        noteId: id,
+        noteTitle: title,
+        noteText: note,
+        noteImagesUrl: url,
+        popupImagesContainer: document.querySelector('.diary__popup-content-image')
+    }
+    updatePopupContent(temporaryPopupData, '')
+
+    const updatePopupContentWithParams = () => updatePopupContent(temporaryPopupData, 'cleanImages')
+    const addPopupImageWithParams = () => addPopupImage(temporaryPopupData)
+    const savePopupWithParams = () => savePopup(temporaryPopupData)
+
+    addPopupImageButton.addEventListener('change', addPopupImageWithParams)
+    cleanPopupImages.addEventListener('click', updatePopupContentWithParams)
+
+    canselButton.addEventListener('click', () => {
+        popup.classList.add('none')
+        cleanPopupImages.removeEventListener('click', updatePopupContentWithParams)
+        addPopupImageButton.removeEventListener('change', addPopupImageWithParams)
     })
-    popupImageWrapper.addEventListener('mouseleave', () => {
-        document.querySelector('.diary-note__popup-edit').classList.add('none');
-    })
-    changeImageInput.addEventListener('change', () => {
-        const file = changeImageInput.files[0];
-        const imageURL = URL.createObjectURL(file);
-        changeImageInput.value = null;
-        popupImageWrapper.querySelector('img').src = imageURL;
-    })
+    saveButton.addEventListener('click', savePopupWithParams)
+
+    function savePopup(temporaryPopupData) {
+        popup.classList.add('none')
+        cleanPopupImages.removeEventListener('click', updatePopupContentWithParams)
+        addPopupImageButton.removeEventListener('change', addPopupImageWithParams)
+        saveNoteChanges(temporaryPopupData)
+        saveButton.removeEventListener('click', savePopupWithParams)
+    }
+}
+
+function changeImage(image, index, changeImageInput, imageArray) {
+    let imageURL = createImageUrl(changeImageInput)
+    image.style.backgroundImage = `url("${imageURL}")`;
+    imageArray[index] = imageURL
+}
+
+function deleteImage(image, index, temporaryPopupData) {
+    image.remove()
+    temporaryPopupData.noteImagesUrl.splice(index, 1);
+    updatePopupContent(temporaryPopupData, '')
+    if (temporaryPopupData.noteImagesUrl.length === 1) {
+        document.querySelector('.diary__popup-clean-images').classList.add('none')
+    }
+}
+
+function updatePopupContent(popupData, operation) {
+    if (operation === 'cleanImages') {
+        popupData.noteImagesUrl = [];
+        document.querySelector('.diary__popup-clean-images').classList.add('none')
+    }
+    if (popupData.noteImagesUrl.length > 1) {
+        document.querySelector('.diary__popup-clean-images').classList.remove('none')
+    }
+    popupIdBox.innerText = popupData.noteId;
+    popupTitle.innerText = popupData.noteTitle;
+    popupText.innerText = popupData.noteText;
+    insertPopupImage(popupData)
+}
+
+function addPopupImage(popupData) {
+    if (popupData.noteImagesUrl.length > 4) {
+        alert('Невозможно добавить более 5 изображений')
+        return
+    }
+    let imageURL = createImageUrl(addPopupImageButton)
+    popupData.noteImagesUrl.push(imageURL);
+    insertPopupImage(popupData)
+    if (popupData.noteImagesUrl.length > 1) {
+        document.querySelector('.diary__popup-clean-images').classList.remove('none')
+    }
 }
 
 // удаление одной заметки
@@ -362,11 +348,10 @@ function delNote(element) {
     const id = (+note.id);
     const arrayNotesLS = getNotesLS()
     const newArrayNotesLS = arrayNotesLS.filter(note => note.id !== id);
-    let listIndex = document.querySelector('.page-active').innerText;
 
     setNotesLS(newArrayNotesLS)
     updateNotesList()
-    saveNotes(listIndex)
+    saveNotes()
 }
 
 //удаление всех заметок
@@ -392,8 +377,11 @@ function getCreationNoteTime() {
 }
 
 //служебные функции
-function togglingNone(elem) {
-    elem.classList.toggle('none')
+function createImageUrl(fileInput) {
+    const file = fileInput.files[0];
+    const imageURL = URL.createObjectURL(file);
+    fileInput.value = null;
+    return imageURL
 }
 
 function correctingData(data) {
@@ -440,20 +428,6 @@ function updateNotesList() {
     renderNotes(getNotesLS());
 }
 
-function setListsMarks(lists, active) {
-    let marksBody = document.querySelector('.diary-note__pages-num');
-    marksBody.innerHTML = '';
-
-    let div = document.createElement('div');
-    div.classList.add('diary-note__page')
-    for (let i = 0; i < +lists; i++) {
-        div.innerText = i + 1;
-        if (div.innerText === active) {
-            div.classList.add('page-active');
-        }
-        marksBody.appendChild(div.cloneNode(true));
-    }
-}
 
 function renderNotes(notes) {
     if (notes.length === 0) {
@@ -461,11 +435,12 @@ function renderNotes(notes) {
         return
     }
     messageNoNotes.classList.add('none')
+
     notes.forEach(value => {
-        const {id, title, time, note, type, photoUrl} = value;
-        let item = '';
-        if (type === 'text') {
-            item = `<div class="diary-note-body__note" id="${id}">
+        const {id, title, time, note, photoUrl} = value;
+        let item =
+            `<div class="diary-note-body__note" id="${id}">
+                <div class="diary-note-body__image-wrap"></div>
                 <div class="diary-note-body__title-wrap">
                     <div class="diary-note-body__title">${title}</div>
                 </div>
@@ -477,41 +452,74 @@ function renderNotes(notes) {
                     </div>
                 </div>
             </div>`
-        } else {
-            item = `<div class="diary-note-body__note" id="${id}">
-                <div class="diary-note-body__image-wrap">
-                    <div class="diary-note-body__image">
-                        <img src="${photoUrl}" class="note-img">
-                        <div class="diary-note-body__edit none">
-                            <input type="file" id="input-${id}" accept="image/*" hidden/>
-                            <label for="input-${id}">
-                                <img src="https://i.postimg.cc/qMRPZkYP/edite.png" />
-                            </label>
-                        </div>
-                    </div>
-                </div>
-                <div class="diary-note-body__title-wrap">
-                    <div class="diary-note-body__title">${title}</div>
-                </div>
-                <div class="diary-note-body__wrap">
-                    <div class="diary-note-body__time">${time}</div>
-                    <div class="diary-note-body__text">${note}</div>
-                    <div class="diary-note-body__del">
-                        <img src="https://i.postimg.cc/ydwt9JwD/del.png" class="del-btn">
-                    </div>
-                </div>
-            </div>
-            `
-        }
-        notesList.insertAdjacentHTML('beforeend', item);
-        let appendedNote = document.getElementById(id);
-        appendedNote.addEventListener('click', (evt) => createPopup(evt, note, title, id, photoUrl))
 
-        let delButton = appendedNote.querySelector('.diary-note-body__del');
+        notesList.insertAdjacentHTML('beforeend', item);
+        const appendedNote = document.getElementById(id);
+        const noteImageWrapper = appendedNote.querySelector('.diary-note-body__image-wrap');
+        insertImageItems({repetitions: photoUrl.length, srcArray: photoUrl, body: noteImageWrapper})
+        appendedNote.addEventListener('click', (evt) => createPopup({evt, note, title, id, url: photoUrl}))
+
+        const delButton = appendedNote.querySelector('.diary-note-body__del');
         delButton.addEventListener('click', () => delNote(delButton))
     })
+
 }
 
 function deleteDots(string) {
-    return string = string[0] + string[1] + string[3] + string[4] + string[6] + string[7] + string[8] + string[9] + string[10]
+    return string = string[0] + string[1] + string[3] + string[4] + string[6] + string[7] + string[8] + string[9]
+}
+
+function insertImageItems({repetitions, srcArray, body}) {
+    for (let i = 0; i < repetitions; i++) {
+        let imageItem =
+            `<div class="diary-note-body__image">
+                <img src="${srcArray[i]}" class="note-img">
+            </div>`
+
+        body.insertAdjacentHTML('beforeend', imageItem);
+    }
+}
+
+function insertPopupImage(temporaryPopupData) {
+    let body = temporaryPopupData.popupImagesContainer
+    body.innerHTML = ''
+    for (let i = 0; i < temporaryPopupData.noteImagesUrl.length; i++) {
+        let imageItem =
+            `<div class="diary__popup-image" id="image-${i + 1}">
+                <div class="diary__popup-panel none">
+                    <div class="diary__popup-edit-btn">
+                        <input type="file" id="edit-img-${i + 1}" accept="image/*" hidden/>
+                        <label for="edit-img-${i + 1}">
+                            <img src="https://i.postimg.cc/qMRPZkYP/edite.png"/>
+                        </label>
+                    </div>
+
+                    <div class="diary__popup-del-btn" id="delete-img-${i + 1}">
+                        <img src="https://i.postimg.cc/ydwt9JwD/del.png"/>
+                    </div>
+                </div>
+            </div>`
+
+        body.insertAdjacentHTML('beforeend', imageItem);
+        let image = document.getElementById(`image-${i + 1}`)
+        image.style.backgroundImage = `url(${temporaryPopupData.noteImagesUrl[i]})`
+
+        const panel = image.querySelector('.diary__popup-panel');
+        const changeImageInput = document.getElementById(`edit-img-${i + 1}`)
+        const deleteImageButton = document.getElementById(`delete-img-${i + 1}`)
+
+        const changeImageWithParams = () => changeImage(image, i, changeImageInput, temporaryPopupData.noteImagesUrl)
+        const deleteImageWithParams = () => deleteImage(image, i, temporaryPopupData)
+
+        image.addEventListener('mouseenter', () => {
+            panel.classList.remove('none');
+            changeImageInput.addEventListener('change', changeImageWithParams)
+            deleteImageButton.addEventListener('click', deleteImageWithParams)
+        })
+        image.addEventListener('mouseleave', () => {
+            panel.classList.add('none');
+            changeImageInput.removeEventListener('change', changeImageWithParams)
+            deleteImageButton.removeEventListener('click', deleteImageWithParams)
+        })
+    }
 }

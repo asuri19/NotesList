@@ -7,6 +7,15 @@
         padding: 4rem 1.5rem 2rem;
     }
 
+    @media (max-width: 768px) {
+        .diary__container {
+            flex-direction: column;
+            height: 100%;
+            padding-top: 20px;
+            padding-bottom: 20px;
+        }
+    }
+
     .diary__calendar {
         width: 22.5rem;
         background: #fff;
@@ -15,6 +24,19 @@
         position: relative;
         z-index: 1;
         margin-right: 2rem;
+    }
+
+    @media (max-width: 1200px) {
+        .diary__calendar {
+            width: 280px;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .diary__calendar {
+            width: 100%;
+            margin-bottom: 30px;
+        }
     }
 
     .diary__calendar-title {
@@ -32,25 +54,6 @@
         font-weight: 600;
     }
 
-    .diary__calendar-icons {
-        display: flex;
-        justify-content: space-between;
-    }
-
-    .diary__calendar-icons img {
-        width: 26px;
-        height: 26px;
-        cursor: pointer;
-    }
-
-    .diary__calendar-icons img:first-child {
-        margin-right: 15px;
-    }
-
-    .diary__calendar-icons img:active {
-        transform: scale(0.9);
-    }
-
     .diary__calendar-month {
         display: flex;
         justify-content: space-between;
@@ -65,11 +68,6 @@
     }
 
     .diary__calendar-select-title {
-        display: flex;
-        align-items: center;
-    }
-
-    .diary__calendar-select p {
         font-size: 24px;
         line-height: 24px;
         font-weight: 700;
@@ -78,20 +76,17 @@
         user-select: none;
     }
 
-    .diary__calendar-select-icon {
-        width: 25px;
-        margin-left: 3px;
-        cursor: pointer;
-    }
-
-    .diary__calendar-select-icon:active {
-        transform: scale(0.9);
-    }
-
     .diary__calendar-buttons {
         display: flex;
         background: #ffd3a3;
         border-radius: 1rem;
+    }
+
+    .diary__calendar-buttons img {
+        width: 26px;
+        height: 26px;
+        padding: 5px;
+        cursor: pointer;
     }
 
     .diary__calendar-buttons-bg {
@@ -105,13 +100,6 @@
 
     .diary__calendar-buttons-bg:active {
         transform: scale(0.9);
-    }
-
-    .diary__calendar-buttons img {
-        width: 26px;
-        height: 26px;
-        padding: 5px;
-        cursor: pointer;
     }
 
     .diary__calendar-week {
@@ -139,18 +127,6 @@
         width: 100%;
         display: flex;
         flex-direction: column;
-    }
-
-    .diary__calendar-note {
-        display: flex;
-        justify-content: space-between;
-        width: 100%;
-        color: #fff;
-        background: #556680;
-        padding: 10px 16px;
-        border-radius: 1rem;
-        font-size: 14px;
-        margin-bottom: 8px;
     }
 
     .diary__calendar-item {
@@ -185,6 +161,19 @@
         padding: 1.8rem;
     }
 
+    @media (max-width: 1200px) {
+        .diary-note {
+            width: 840px;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .diary-note {
+            width: 100%;
+            margin-bottom: 30px;
+        }
+    }
+
     .diary-note__wrap {
         max-width: 700px;
         height: 100%;
@@ -215,44 +204,6 @@
         border: 1px solid #556680;
     }
 
-    .diary-note__pages {
-        bottom: 1.875rem;
-        left: -2.3125rem;
-        position: absolute;
-        z-index: 2;
-        -webkit-user-select: none;
-        -moz-user-select: none;
-        user-select: none;
-    }
-
-    .diary-note__page {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 2.5rem;
-        width: 2.5rem;
-        background: #556680;
-        border: 1px solid #63799b;
-        border-radius: 16px 0 0 16px;
-        color: #fff;
-        cursor: pointer;
-        margin-top: -4px;
-        padding: 0 0 4px 4px;
-        transition: all 0.4s;
-    }
-
-    .diary-note__page:hover {
-        background: #63799b;
-        border: 1px solid #556680;
-        transform: scale(1.2, 1);
-    }
-
-    .diary-note__page.page-active {
-        background: #63799b;
-        border: 1px solid #556680;
-        cursor: default;
-    }
-
     .diary-note-body {
         width: 100%;
         height: 100%;
@@ -267,6 +218,13 @@
         border-radius: 1rem;
     }
 
+    @media (max-width: 768px) {
+        .diary-note-body {
+            min-height: 700px;
+            padding: 16px;
+        }
+    }
+
     .diary-note-body__notes {
         display: flex;
         flex-direction: column;
@@ -277,16 +235,7 @@
         margin-bottom: 30px;
     }
 
-    .diary-note-body__title {
-        font-size: 30px;
-        line-height: 30px;
-    }
-
-    .diary-note-body__title:focus {
-        outline: none;
-    }
-
-    .diary-note-body__title-wrap {
+    .diary-note-body__image-wrap {
         display: flex;
         align-items: flex-start;
         justify-content: space-between;
@@ -296,57 +245,28 @@
     .diary-note-body__image {
         position: relative;
         width: 100%;
-        max-width: 620px;
+        max-width: 100%;
+        margin-right: 5px;
     }
 
     .diary-note-body__image img {
-        max-width: 620px;
+        max-width: 100%;
     }
 
-    .diary-note-body__image-wrap {
+    .diary-note-body__image:last-child {
+        margin-right: 0;
+    }
+
+    .diary-note-body__title-wrap {
         display: flex;
         align-items: flex-start;
         justify-content: space-between;
         margin-bottom: 15px;
     }
 
-    .diary-note-body__edit {
-        background: #fff;
-        position: absolute;
-        top: 0;
-        right: 5px;
-        z-index: 15;
-        padding: 10px 5px;
-        border-bottom-right-radius: 8px;
-        border-bottom-left-radius: 8px;
-        cursor: pointer;
-        transition: all 0.4s;
-    }
-
-    .diary-note-body__edit input {
-        cursor: pointer;
-    }
-
-    .diary-note-body__edit label {
-        cursor: pointer;
-    }
-
-    .diary-note-body__edit img {
-        width: 20px;
-        height: 20px;
-        opacity: 0.5;
-    }
-
-    .diary-note-body__del {
-        width: 20px;
-        height: 20px;
-        cursor: pointer;
-    }
-
-    .diary-note-body__del img {
-        width: 20px;
-        height: 20px;
-        opacity: 0.5;
+    .diary-note-body__title {
+        font-size: 30px;
+        line-height: 30px;
     }
 
     .diary-note-body__wrap {
@@ -370,13 +290,35 @@
         padding-right: 10px;
     }
 
-    .diary-note-body__text:focus {
-        outline: 1px solid #8e8e8e;
-        outline-offset: 5px;
+    .diary-note-body__del {
+        width: 20px;
+        height: 20px;
+        cursor: pointer;
     }
 
-    .diary-note-body__text hr {
-        margin-top: 10px;
+    .diary-note-body__del img {
+        width: 20px;
+        height: 20px;
+        opacity: 0.5;
+    }
+
+    .diary-note__clear-wrap {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .diary-note__clear {
+        font-size: 30px;
+        line-height: 30px;
+        opacity: 0.5;
+    }
+
+    @media (max-width: 1024px) {
+        .diary-note__clear {
+            font-size: 20px;
+            line-height: 20px;
+        }
     }
 
     .diary-note-body__buttons {
@@ -418,7 +360,7 @@
         user-select: none;
     }
 
-    .diary-note__popup {
+    .diary__popup {
         position: fixed;
         top: 0;
         left: 0;
@@ -432,62 +374,138 @@
         z-index: 15;
     }
 
-    .diary-note__popup-content {
+    .diary__popup-wrap {
         display: flex;
         flex-direction: column;
-        justify-content: space-between;
-        position: relative;
-        left: 190px;
         width: 45%;
         max-height: 45%;
+        position: relative;
+        left: 190px;
+        background-color: #fff;
         border-top-right-radius: 1rem;
         border-top-left-radius: 1rem;
-        background-color: #fff;
-        padding: 20px;
+        padding: 20px 25px 10px;
         overflow: scroll;
     }
 
-    .diary-note__popup-wrap {
-        margin-bottom: 20px;
+    .diary__popup-options {
+        display: flex;
+        margin-bottom: 16px;
+        background-color: #fff;
+        width: 100%;
+        max-height: 80px;
     }
 
-    .diary-note__popup-image {
+    .diary__popup-options img {
+        max-height: 80px;
+    }
+
+    .diary__popup-add-image,
+    .diary__popup-clean-images {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        max-width: 25%;
+        background: #ffd3a1;
+        cursor: pointer;
+        border-radius: 16px;
+        transition: background-color 0.3s;
+    }
+
+    .diary__popup-add-image:hover,
+    .diary__popup-clean-images:hover {
+        background-color: #fdb058;
+    }
+
+    .diary__popup-add-image {
+        margin-right: 5px;
+    }
+
+    .diary__popup-add-button,
+    .diary__popup-clean-button {
+        width: 80%;
+        color: #000;
+        border-radius: 8px;
+        text-align: center;
+        padding: 5px 10px;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        user-select: none;
+        font-size: 12px;
+        cursor: pointer;
+    }
+
+    .diary__popup-content-image {
+        display: flex;
+        margin-bottom: 16px;
+    }
+
+    .diary__popup-image {
         width: 150px;
-        margin-bottom: 10px;
+        max-width: 100%;
+        min-height: 80px;
+        margin-right: 5px;
+        position: relative;
+        border-radius: 16px;
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position: center;
     }
 
-    .diary-note__popup-image img {
-        width: 150px;
-    }
-
-    .diary-note__popup-edit {
-        background: #fff;
+    .diary__popup-panel {
+        display: flex;
         position: absolute;
-        top: 20px;
-        left: 20px;
-        z-index: 15;
-        padding: 5px 5px;
-        border-bottom-right-radius: 8px;
-        border-bottom-left-radius: 8px;
+        top: 0;
+        right: 0;
+        z-index: 16;
         cursor: pointer;
         transition: all 0.4s;
     }
 
-    .diary-note__popup-edit input {
+    .diary__popup-edit-btn {
+        border-top: none;
+        background: #ffffff;
+        padding: 5px;
+        border-bottom-left-radius: 10px;
+        border-bottom-right-radius: 10px;
         cursor: pointer;
     }
 
-    .diary-note__popup-edit label {
+    .diary__popup-edit-btn input {
         cursor: pointer;
     }
 
-    .diary-note__popup-edit img {
+    .diary__popup-edit-btn label {
+        cursor: pointer;
+    }
+
+    .diary__popup-edit-btn img {
         width: 20px;
         height: 20px;
         opacity: 0.5;
     }
 
-    .diary-note__popup-title {
+    .diary__popup-del-btn {
+        border-top: none;
+        background: #ffffff;
+        padding: 5px;
+        border-bottom-left-radius: 10px;
+        border-bottom-right-radius: 10px;
+    }
+
+    .diary__popup-del-btn img {
+        width: 20px;
+        height: 20px;
+        opacity: 0.5;
+    }
+
+    .diary__popup-content {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .diary__popup-title {
         word-break: break-word;
         background: #fff;
         font-size: 30px;
@@ -495,33 +513,33 @@
         margin-bottom: 15px;
     }
 
-    .diary-note__popup-title:focus {
+    .diary__popup-title:focus {
         outline: none;
     }
 
-    .diary-note__popup-text {
+    .diary__popup-text {
         font-size: 14px;
         line-height: 17px;
     }
 
-    .diary-note__popup-text:focus {
+    .diary__popup-text:focus {
         outline: none;
     }
 
-    .diary-note__popup-buttons {
+    .diary__popup-buttons {
+        width: 45%;
         display: flex;
+        align-items: center;
+        justify-content: flex-end;
         position: relative;
         left: 190px;
         background: #fff;
         border-bottom-right-radius: 1rem;
         border-bottom-left-radius: 1rem;
-        justify-content: flex-end;
-        align-items: center;
-        width: 45%;
-        padding: 10px 10px 10px;
+        padding: 10px 25px;
     }
 
-    .diary-note__popup-button {
+    .diary__popup-button {
         height: 20px;
         width: 20px;
         -webkit-user-select: none;
@@ -529,7 +547,7 @@
         user-select: none;
     }
 
-    .diary-note__popup-button-bg {
+    .diary__popup-button-bg {
         display: flex;
         justify-content: center;
         align-items: center;
@@ -541,27 +559,12 @@
         margin-right: 10px;
     }
 
-    .diary-note__popup-button-bg:active {
+    .diary__popup-button-bg:last-child {
+        margin-right: 0;
+    }
+
+    .diary__popup-button-bg:active {
         transform: scale(0.9);
-    }
-
-    .diary-note__clear {
-        font-size: 30px;
-        line-height: 30px;
-        opacity: 0.5;
-    }
-
-    @media (max-width: 950px) {
-        .diary-note__clear {
-            font-size: 20px;
-            line-height: 20px;
-        }
-    }
-
-    .diary-note__clear-wrap {
-        display: flex;
-        justify-content: center;
-        align-items: center;
     }
 
     .today {
@@ -589,107 +592,6 @@
         transform: scale(1);
     }
 
-    .selector {
-        position: absolute;
-        z-index: 2;
-        top: 20px;
-        left: 20px;
-        width: 250px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        background: #fff;
-        border: 1px solid #ffd3a3;
-        border-radius: 1rem;
-        margin-top: 10px;
-        padding: 1.3rem;
-    }
-
-    .selector p {
-        font-weight: 400;
-        font-size: 16px;
-    }
-
-    .selector__option {
-        border-bottom: 1px solid #fabf7e;
-        cursor: pointer;
-    }
-
-    .selector__option p {
-        line-height: 30px;
-    }
-
-    .selector__option:last-child {
-        border-bottom: none;
-    }
-
-    .selector-year,
-    .selector-month {
-        width: 100%;
-        position: relative;
-        background: #ffd3a3;
-        border-radius: 1rem;
-        padding: 15px;
-        margin-bottom: 15px;
-    }
-
-    .selector-year__title,
-    .selector-month__title {
-        width: 100%;
-        display: flex;
-        justify-content: space-between;
-    }
-
-    .selector-year__open,
-    .selector-month__open {
-        width: 20px;
-        cursor: pointer;
-    }
-
-    .selector-year__open:active,
-    .selector-month__open:active {
-        transform: scale(0.9);
-    }
-
-    .selector-year__options,
-    .selector-month__options {
-        position: absolute;
-        z-index: 3;
-        left: 0;
-        width: 100%;
-        max-height: 244px;
-        overflow: auto;
-        margin-top: 20px;
-        padding: 15px;
-        background: #ffd3a3;
-        border-radius: 1rem;
-    }
-
-    .selector-year__options::-webkit-scrollbar,
-    .selector-month__options::-webkit-scrollbar {
-        display: block;
-        background-color: #fabf7e;
-        width: 11px;
-    }
-
-    .selector-year__options::-webkit-scrollbar-thumb,
-    .selector-month__options::-webkit-scrollbar-thumb {
-        background-color: #ffaf4a;
-    }
-
-    .selector-button {
-        width: 100%;
-        background: #ffd3a3;
-        padding: 15px;
-        border-radius: 1rem;
-        border: 1px solid #ffd3a3;
-        cursor: pointer;
-    }
-
-    .selector-button:active {
-        transform: scale(0.9);
-    }
-
     .none {
         display: none;
     }
@@ -699,116 +601,20 @@
         <div class="diary__calendar">
             <div class="diary__calendar-title">
                 <p>Записи</p>
-                <div class="diary__calendar-icons">
-                    <!--                    <img src="https://i.postimg.cc/15qFg6M0/all.png" alt="">-->
-                    <!--                    <img src="https://i.postimg.cc/3r6pJ9jJ/serch.png" alt="">-->
-                </div>
             </div>
 
             <div class="diary__calendar-month">
                 <div class="diary__calendar-select">
                     <div class="diary__calendar-select-title">
-                        <p></p>
-                        <img src="https://i.postimg.cc/dVhBb87q/select.png" alt="" class="diary__calendar-select-icon">
 
-                    </div>
-                    <div class="selector none">
-                        <div class="selector-year">
-                            <div class="selector-year__title">
-                                <p>2024</p>
-                                <img src="https://i.postimg.cc/dVhBb87q/select.png" alt="" class="selector-year__open">
-                            </div>
-                            <div class="selector-year__options none">
-                                <div class="selector__option">
-                                    <p>2024</p>
-                                </div>
-                                <div class="selector__option">
-                                    <p>2023</p>
-                                </div>
-                                <div class="selector__option">
-                                    <p>2022</p>
-                                </div>
-                                <div class="selector__option">
-                                    <p>2021</p>
-                                </div>
-                                <div class="selector__option">
-                                    <p>2020</p>
-                                </div>
-                                <div class="selector__option">
-                                    <p>2019</p>
-                                </div>
-                                <div class="selector__option">
-                                    <p>2018</p>
-                                </div>
-                                <div class="selector__option">
-                                    <p>2017</p>
-                                </div>
-                                <div class="selector__option">
-                                    <p>2016</p>
-                                </div>
-                                <div class="selector__option">
-                                    <p>2015</p>
-                                </div>
-                                <div class="selector__option">
-                                    <p>2014</p>
-                                </div>
-                                <div class="selector__option">
-                                    <p>2013</p>
-                                </div>
-                                <div class="selector__option">
-                                    <p>2012</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="selector-month">
-                            <div class="selector-month__title">
-                                <p>июль</p>
-                                <img src="https://i.postimg.cc/dVhBb87q/select.png" alt="" class="selector-month__open">
-                            </div>
-                            <div class="selector-month__options none">
-                                <div class="selector__option">
-                                    <p>январь</p>
-                                </div>
-                                <div class="selector__option">
-                                    <p>февраль</p>
-                                </div>
-                                <div class="selector__option">
-                                    <p>март</p>
-                                </div>
-                                <div class="selector__option">
-                                    <p>июнь</p>
-                                </div>
-                                <div class="selector__option">
-                                    <p>июль</p>
-                                </div>
-                                <div class="selector__option">
-                                    <p>август</p>
-                                </div>
-                                <div class="selector__option">
-                                    <p>сентябрь</p>
-                                </div>
-                                <div class="selector__option">
-                                    <p>октябрь</p>
-                                </div>
-                                <div class="selector__option">
-                                    <p>ноябрь</p>
-                                </div>
-                                <div class="selector__option">
-                                    <p>декабрь</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <button class="selector-button">Применить</button>
                     </div>
                 </div>
                 <div class="diary__calendar-buttons">
                     <div class="diary__calendar-buttons-bg" id="last-month">
-                        <img src="https://i.postimg.cc/mDmzXmcv/last.png" alt="">
+                        <img src="https://i.postimg.cc/mDmzXmcv/last.png">
                     </div>
                     <div class="diary__calendar-buttons-bg" id="next-month">
-                        <img src="https://i.postimg.cc/MHXch1Vv/next.png" alt="">
+                        <img src="https://i.postimg.cc/MHXch1Vv/next.png">
                     </div>
                 </div>
             </div>
@@ -826,25 +632,13 @@
                 <div class="diary__calendar-days">
 
                 </div>
-                <div class="diary__calendar-notes">
-
-                </div>
             </div>
         </div>
 
         <div class="diary-note">
             <div class="diary-note__wrap">
-                <div class="diary-note__datemark">
-                    <p>date</p>
-                </div>
-                <div class="diary-note__pages">
-                    <div class="diary-note__pages-num">
-                        <div class="diary-note__page page-active">1</div>
-                    </div>
-                    <div class="diary-note__page" id="new-list">+</div>
-                </div>
+                <div class="diary-note__datemark"></div>
                 <div class="diary-note-body">
-
                     <div class="diary-note-body__notes">
 
                     </div>
@@ -858,13 +652,6 @@
                             <img src="https://i.postimg.cc/fL31J7g4/add.png" title="Добавить заметку" class="diary-note-body__button">
                         </div>
 
-                        <div class="diary-note-body__button-bg" id="image-button">
-                            <input type="file" id="add-image-input" accept="image/*" hidden />
-                            <label for="add-image-input" class="diary-note-body__button">
-                                <img src="https://i.postimg.cc/xTyy92Wt/image.png" title="Добавить картинку" class="diary-note-body__button">
-                            </label>
-                        </div>
-
                         <div class="diary-note-body__button-bg" id="clear-button">
                             <img src="https://i.postimg.cc/ydwt9JwD/del.png" title="Удалить все" class="diary-note-body__button">
                         </div>
@@ -874,66 +661,37 @@
         </div>
     </div>
 
-    <div class="diary-note__popup none">
-        <div class="diary-note__popup-content">
-            <div class="diary-note__popup-wrap">
-                <div class="popup-note-id none"></div>
-                <div class="diary-note__popup-image">
-                    <img src="">
-                    <div class="diary-note__popup-edit none">
-                        <input type="file" id="edit-img" accept="image/*" hidden />
-                        <label for="edit-img">
-                            <img src="https://i.postimg.cc/qMRPZkYP/edite.png" />
-                        </label>
+    <div class="diary__popup none">
+        <div class="diary__popup-wrap">
+            <div class="diary__popup-options">
+                <div class="diary__popup-add-image">
+                    <input type="file" id="add-img" accept="image/*" hidden />
+                    <label for="add-img" class="diary__popup-add-button">
+                        Добавить фото
+                    </label>
+                </div>
+                <div class="diary__popup-clean-images none">
+                    <div class="diary__popup-clean-button" id="clean-images">
+                        Удалить все фото
                     </div>
                 </div>
-                <div class="diary-note__popup-title" contenteditable="true">Заголовок</div>
-                <div class="diary-note__popup-text" contenteditable="true">Текст заметки</div>
+            </div>
+            <div class="diary__popup-content-image">
+
+            </div>
+            <div class="diary__popup-content">
+                <div class="diary__popup-id none"></div>
+                <div class="diary__popup-title" contenteditable="true">Заголовок</div>
+                <div class="diary__popup-text" contenteditable="true">Текст заметки</div>
             </div>
         </div>
-        <div class="diary-note__popup-buttons">
-            <div class="diary-note__popup-button-bg" id="save-button">
-                <img src="https://i.postimg.cc/FFZJnc3r/save.png" title="Сохранить заметку" class="diary-note__popup-button">
+        <div class="diary__popup-buttons">
+            <div class="diary__popup-button-bg" id="save-button">
+                <img src="https://i.postimg.cc/FFZJnc3r/save.png" title="Сохранить заметку" class="diary__popup-button">
             </div>
-            <div class="diary-note__popup-button-bg" id="cansel-button">
-                <img src="https://i.postimg.cc/C1TmcSKM/del.png" title="Отменить изменения" class="diary-note__popup-button">
+            <div class="diary__popup-button-bg" id="cansel-button">
+                <img src="https://i.postimg.cc/C1TmcSKM/del.png" title="Отменить изменения" class="diary__popup-button">
             </div>
         </div>
     </div>
 </section>
-
-<template id="note">
-    <div class="diary-note-body__note">
-        <div class="diary-note-body__title-wrap">
-            <div class="diary-note-body__title" contenteditable="true">
-                Заметка
-            </div>
-            <div class="diary-note-body__del">
-                <img src="https://i.postimg.cc/ydwt9JwD/del.png">
-            </div>
-        </div>
-        <div class="diary-note-body__wrap">
-            <div class="diary-note-body__time"></div>
-            <div class="diary-note-body__text" contenteditable="true">
-                Это твоя заметка и&nbsp;ее&nbsp;можно писать прямо тут!
-            </div>
-        </div>
-    </div>
-
-    <div class="diary-note-body__note">
-        <div class="diary-note-body__title-wrap">
-            <div class="diary-note-body__image" contenteditable="true">
-                Заметка
-            </div>
-            <div class="diary-note-body__del">
-                <img src="https://i.postimg.cc/ydwt9JwD/del.png">
-            </div>
-        </div>
-        <div class="diary-note-body__wrap">
-            <div class="diary-note-body__time"></div>
-            <div class="diary-note-body__text" contenteditable="true">
-                Это твоя заметка и&nbsp;ее&nbsp;можно писать прямо тут!
-            </div>
-        </div>
-    </div>
-</template>
